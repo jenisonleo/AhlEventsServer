@@ -2,12 +2,13 @@
   "name": "ahaa_node",
   "version": "1.0.0",
   "description": "",
-  "main": "hello-world-server.js",
+  "main": "server.js",
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "mongoose": "^5.5.1",
-    "mongoose-type-email": "^1.0.10"
+    "mongoose-type-email": "^1.0.10",
+    "morgan": "^1.9.1"
   },
   "devDependencies": {},
   "scripts": {
