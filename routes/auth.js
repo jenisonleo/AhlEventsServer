@@ -21,12 +21,15 @@ const isUser = async function(req, res, next) {
       res.send({message: "User not authorized, invalid token"})
     }
   }
+  else {
+    res.send({message: "User not authorized, invalid token"})
+  }
 }
 
 const isAdmin = async function(req, res, next) {
   const token = req.header('Authorization')
   if(token) {
-    const user = await userModel.findOne({token: token},{admin: true})
+    const user = await userModel.findOne({ $and:[{token: token},{admin: true}]})
     if(user) {
       next()
     }
