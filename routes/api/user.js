@@ -20,7 +20,7 @@ router.post('/register', function(req, res, next) {
     }
     res.send({'message':'user added successfully'})
   })
-})
+});
 
 router.post('/login', async function(req, res, next) {
   const user  = await userModel.findOne({username: req.body.username , password: req.body.password}
