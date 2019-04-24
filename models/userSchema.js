@@ -21,6 +21,10 @@ var userSchema = new Schema({
     type: String,
     required: true
   },
+  admin: {
+    type: Boolean,
+    default: false
+  },
   token: {
     type: String
   }

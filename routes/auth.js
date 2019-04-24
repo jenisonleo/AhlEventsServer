@@ -12,8 +12,9 @@ const getToken = async function (user) {
 const isUser = async function(req, res, next) {
   const token = req.header('Authorization')
   if(token) {
-    const user = await userModel.findOne({'token': token})
+    const user = await userModel.findOne({token: token},{username:1,email:1})
     if(user) {
+      req.user = user
       next()
     }
     else {
@@ -22,4 +23,17 @@ const isUser = async function(req, res, next) {
   }
 }
 
-module.exports = {getToken, isUser}
+const isAdmin = async function(req, res, next) {
+  const token = req.header('Authorization')
+  if(token) {
+    const user = await userModel.findOne({token: token},{admin: true})
+    if(user) {
+      next()
+    }
+    else {
+      res.send({message: "User is not admin or invalid token"})
+    }
+  }
+}
+
+module.exports = {getToken, isUser, isAdmin}
