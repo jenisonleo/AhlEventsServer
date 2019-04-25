@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
+const dotenv = require('dotenv').config()
 
 app.use(morgan('dev'))
 app.use(bodyParser.json())

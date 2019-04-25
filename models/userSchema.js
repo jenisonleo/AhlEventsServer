@@ -25,6 +25,10 @@ var userSchema = new Schema({
     type: Boolean,
     default: false
   },
+  verified: {
+    type: Boolean,
+    default: false
+  },
   token: {
     type: String
   }
