@@ -39,8 +39,8 @@ router.post('/register', async function(req, res, next) {
   const existingUser = await userModel.findOne({ $or: [{email:{$eq: req.body.email}}, {username:{$eq: req.body.username}}]})
   if(!existingUser) {
     const registerUser = await userModel.create(user)
-    await sendRegistrationEmail(req.body.email, registerUser._id)
-    res.send({message: "User registered Successfully, Please verify your account."})
+    // await sendRegistrationEmail(req.body.email, registerUser._id)
+    res.send({message: "User registered Successfully"})
   }
   else {
     if(existingUser.email === req.body.email) {
@@ -60,7 +60,7 @@ router.post('/login', async function(req, res, next) {
   const user = await userModel.findOne({ $or:[{username: req.body.username}, {email:req.body.email}]})
   if(user) {
     const isRegisteredUser = await bcrypt.compare(req.body.password, user.password)
-    if(isRegisteredUser && user.verified) {
+    if(isRegisteredUser) {
       const token = await getToken(user)
       const header = {
         'Authorization': token
@@ -68,14 +68,11 @@ router.post('/login', async function(req, res, next) {
       res.header('Authorization',token)
       res.send({message:"User Authorized"})
     }
-    else if(!user.verified ) {
-      res.status(403).send({message:"Please verify your account."})
-    }
     else {
-      res.status(403).send({message:'Wrong username or password',user: user})
+      res.status(403).send({message:'Wrong username or password'})
     }
   } else {
-    res.status(403).send({message:'Wrong username or password',user: user})
+    res.status(403).send({message:'Wrong username or password'})
   }
 })
 
