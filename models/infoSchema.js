@@ -5,8 +5,7 @@ const Schema = mongoose.Schema;
 var infoSchema = new Schema({
   title: {
     type: String,
-    required: true,
-    enum: ["Placement","Marriage"]
+    required: true
   },
   description: {
     type: String,
