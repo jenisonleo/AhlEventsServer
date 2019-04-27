@@ -6,7 +6,7 @@ var eventSchema = new Schema({
   title: {
     type: String,
     required: true,
-    enum: ["Placement","Marriage"]
+    enum: ["Match","Marriage"]
   },
   description: {
     type: String,

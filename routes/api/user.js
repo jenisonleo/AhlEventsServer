@@ -1,11 +1,32 @@
 const express = require('express')
 const router = express.Router()
+const nodemailer = require("nodemailer")
 const userModel = require('../../models/userSchema.js')
 const mongoose = require('mongoose')
 const {getToken, isUser} = require('../auth.js')
 const fcmPush = require('fcm-push')
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt')
 const saltRounds = 10;
+
+async function sendRegistrationEmail(email, id) {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.SMTP_EMAIL,
+      pass: process.env.SMTP_PASSWORD
+    }
+  })
+  await transporter.sendMail({
+    from: process.env.SMTP_EMAIL,
+    to: email,
+    subject: 'User Registerion',
+    html: `<h2>Hi, Thanks for registering, please verify your account by clicking the link
+    <a href='${process.env.DOMAIN}/api/verify-user/${id}' target='_blank'> verify </a> </h2>`
+  })
+  transporter.close()
+}
 
 router.post('/register', async function(req, res, next) {
   const hash = await bcrypt.hash(req.body.password, saltRounds)
@@ -15,13 +36,24 @@ router.post('/register', async function(req, res, next) {
     email: req.body.email,
     password: hash
   }
-  const existingUser = await userModel.findOne({ $or: [{email:req.body.email, username:req.body.username}]})
-  if(existingUser) {
-    res.status(401).send({message:"Email or Username should be unique"})
-  } else {
-    await userModel.create(user)
+  const existingUser = await userModel.findOne({ $or: [{email:{$eq: req.body.email}}, {username:{$eq: req.body.username}}]})
+  if(!existingUser) {
+    const registerUser = await userModel.create(user)
+    // await sendRegistrationEmail(req.body.email, registerUser._id)
     res.send({message: "User registered Successfully"})
   }
+  else {
+    if(existingUser.email === req.body.email) {
+      res.status(401).send({message:"Email should be unique"})
+    }
+    else
+      res.status(401).send({message:"Username should be unique"})
+    }
+})
+
+router.get('/verify-user/:id', async function(req, res) {
+  await userModel.updateOne({_id: req.params.id}, {$set: {verified: true}})
+  res.send({message: 'User verified'})
 })
 
 router.post('/login', async function(req, res, next) {
@@ -35,11 +67,12 @@ router.post('/login', async function(req, res, next) {
       }
       res.header('Authorization',token)
       res.send({message:"User Authorized"})
-    } else {
-      res.status(403).send({message:'Wrong username or password',user: user})
+    }
+    else {
+      res.status(403).send({message:'Wrong username or password'})
     }
   } else {
-    res.status(403).send({message:'Wrong username or password',user: user})
+    res.status(403).send({message:'Wrong username or password'})
   }
 })
 
