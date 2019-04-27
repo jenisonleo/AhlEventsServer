@@ -5,8 +5,7 @@ const Schema = mongoose.Schema;
 var eventSchema = new Schema({
   title: {
     type: String,
-    required: true,
-    enum: ["Match","Marriage"]
+    required: true
   },
   description: {
     type: String,

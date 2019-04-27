@@ -13,7 +13,8 @@ const routes = require('./routes/routes')
 app.use('/', routes)
 
 const mongoose = require('mongoose')
-const uri = 'mongodb://localhost/ahlevents'
+//const uri = 'mongodb://localhost/ahlevents'
+const uri = process.env.MONGODB
 mongoose.connect(uri, {
   useNewUrlParser: true
 }, err => {
