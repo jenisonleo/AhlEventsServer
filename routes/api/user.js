@@ -8,6 +8,25 @@ const fcmPush = require('fcm-push')
 const bcrypt = require('bcrypt')
 const saltRounds = 10;
 
+async function sendRegistrationEmail(email, id) {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.SMTP_EMAIL,
+      pass: process.env.SMTP_PASSWORD
+    }
+  })
+  await transporter.sendMail({
+    from: process.env.SMTP_EMAIL,
+    to: email,
+    subject: 'User Registerion',
+    html: `<h2>Hi, Thanks for registering, please verify your account by clicking the link
+    <a href='${process.env.DOMAIN}/api/verify-user/${id}' target='_blank'> verify </a> </h2>`
+  })
+  transporter.close()
+}
 
 router.post('/register', async function(req, res, next) {
   const hash = await bcrypt.hash(req.body.password, saltRounds)
@@ -20,23 +39,7 @@ router.post('/register', async function(req, res, next) {
   const existingUser = await userModel.findOne({ $or: [{email:{$eq: req.body.email}}, {username:{$eq: req.body.username}}]})
   if(!existingUser) {
     const registerUser = await userModel.create(user)
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.SMTP_EMAIL,
-        pass: process.env.SMTP_PASSWORD
-      }
-    })
-    await transporter.sendMail({
-      from: process.env.SMTP_EMAIL,
-      to: req.body.email,
-      subject: 'User Registerion',
-      html: `<h2>Hi, Thanks for registering, please verify your account by clicking the link
-      <a href='${process.env.DOMAIN}/api/verify-user/${registerUser._id}' target='_blank'> verify </a> </h2>`
-    })
-    transporter.close()
+    await sendRegistrationEmail(req.body.email, registerUser._id)
     res.send({message: "User registered Successfully, Please verify your account."})
   }
   else {

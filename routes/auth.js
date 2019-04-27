@@ -5,14 +5,14 @@ const SECRET = 'Secret8'
 
 const getToken = async function (user) {
   const token = await jwt.sign({ _id: user._id},SECRET).toString()
-  await userModel.updateOne({_id:user._id}, {$set:{ token: token}})
+  await userModel.updateOne({_id:user._id}, {$set:{ token}})
   return token
 }
 
 const isUser = async function(req, res, next) {
   const token = req.header('Authorization')
   if(token) {
-    const user = await userModel.findOne({token: token},{username:1,email:1})
+    const user = await userModel.findOne({token},{username:1,email:1})
     if(user) {
       req.user = user
       next()
@@ -29,7 +29,7 @@ const isUser = async function(req, res, next) {
 const isAdmin = async function(req, res, next) {
   const token = req.header('Authorization')
   if(token) {
-    const user = await userModel.findOne({ $and:[{token: token},{admin: true}]})
+    const user = await userModel.findOne({token},{admin: true})
     if(user) {
       next()
     }
