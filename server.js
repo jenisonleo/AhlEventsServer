@@ -33,6 +33,6 @@ app.use(function(err, req, res, next) {
 })
 
 const port = 8002
-app.listen(port, function() {
+app.listen(process.env.PORT || 5000, function() {
 	console.log('Server running at http://127.0.0.1:'+port+'/')
 })
