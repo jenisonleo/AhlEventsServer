@@ -10,14 +10,18 @@ var userSchema = new Schema({
   username: {
     type: String,
     required: true,
-		unique: true
+    unique: true
   },
   email: {
     type: mongoose.SchemaTypes.Email,
     required: true,
-		unique: true
+    unique: true
   },
-  password: {
+  birthDate: {
+    type: Number,
+    required: true
+  },
+  phoneNumber: {
     type: String,
     required: true
   },

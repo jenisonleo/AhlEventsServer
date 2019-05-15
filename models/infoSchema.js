@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
 var infoSchema = new Schema({
   title: {
@@ -12,11 +12,11 @@ var infoSchema = new Schema({
     required: true
   },
   createdAt: {
-    type: Date,
-    default: Date.now()
+    type: Number,
+    required: true
   }
 }, {
   versionKey: false
-});
+})
 
-module.exports = mongoose.model('Infos', infoSchema);
+module.exports = mongoose.model('Infos', infoSchema)
