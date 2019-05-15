@@ -39,9 +39,9 @@ router.post('/register', async function(req, res, next) {
   const existingUser = await userModel.findOne({ $or: [{email:{$eq: req.body.email}}, {username:{$eq: req.body.username}}]})
   if(!existingUser) {
     const registerUser = await userModel.create(user)
-    const token = await getToken(user)
+    const token = await getToken(registerUser)
     // await sendRegistrationEmail(req.body.email, registerUser._id)
-    res.send({message: "User registered Successfully",token})
+    res.json({token:token,name:registerUser.fullname,email:registerUser.email,isAdmin:registerUser.admin,message:"User registered Successfully"})
   }
   else {
     if(existingUser.email === req.body.email) {
@@ -63,7 +63,7 @@ router.post('/login', async function(req, res, next) {
     const isRegisteredUser = await bcrypt.compare(req.body.password, user.password)
     if(isRegisteredUser) {
       const token = await getToken(user)
-      res.send({message:"User Authorized",token})
+      res.json({token:token,name:user.fullname,email:user.email,isAdmin:user.admin,message:"login successful"})
     }
     else {
       res.status(403).send({message:'Wrong username or password'})

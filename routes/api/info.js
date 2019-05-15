@@ -5,9 +5,12 @@ const mongoose = require('mongoose');
 const {getToken, isUser, isAdmin} = require('../auth.js')
 
 router.post('/info', isAdmin, async function(req, res, next) {
+  var date = new Date();
+  var timestamp = date.getTime();
   const info = {
     title: req.body.title,
-    description: req.body.description
+    description: req.body.description,
+    createdAt:timestamp
   }
   await infoModel.create(info)
   res.send({message:'info added successfully'})

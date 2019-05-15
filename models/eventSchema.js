@@ -16,11 +16,11 @@ var eventSchema = new Schema({
     required: true,
   },
   fromDate: {
-    type: Date,
+    type: Number,
     required: true,
   },
   toDate: {
-    type: Date,
+    type: Number,
     required: true,
   }
 }, {

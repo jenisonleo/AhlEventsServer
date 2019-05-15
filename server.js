@@ -32,7 +32,7 @@ app.use(function(err, req, res, next) {
   }})
 })
 
-const port = 8002
+const port = process.env.PORT
 app.listen(port, function() {
 	console.log('Server running at http://127.0.0.1:'+port+'/')
 })
